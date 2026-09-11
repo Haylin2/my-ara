@@ -1,0 +1,1 @@
+PHPStan baseline gotcha in h-dashboard: when removing `Route::livewire()` calls from routes/web.php, always update `phpstan-baseline.neon` — the `staticMethod.notFound` count for that file must be decremented. Also check `method.notFound` entries for blade files that gained/lost `auth()->user()` calls. CI fails silently with stale counts.
