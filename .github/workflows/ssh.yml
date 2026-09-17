@@ -1,6 +1,8 @@
-name: celin
+name: sydney
 
 on:
+  schedule:
+    - cron: '0 */6 * * *'  # روشن شدن خودکار هر ۶ ساعت یک‌بار (۲۴/۷)
   workflow_dispatch:
 
 jobs:
@@ -9,7 +11,7 @@ jobs:
     timeout-minutes: 360
     env:
       REPO_ORIGIN: https://github.com/haileen5/h-dashboard.git
-      WF_NAME: celin
+      WF_NAME: sydney
 
     steps:
       - name: 1. Checkout Repository
@@ -299,7 +301,7 @@ jobs:
                 && echo '✅ Seed result sent to Telegram' \
                 || echo '⚠️ Seed result failed to send'
             else
-              hermes send --to telegram "celin online and ready." \
+              hermes send --to telegram "sydney online and ready." \
                 && echo '✅ Welcome message sent to Telegram' \
                 || echo '⚠️ Welcome message failed to send'
             fi
@@ -357,7 +359,7 @@ jobs:
             echo 'ℹ️ No changes to commit'
           else
             git add hermes/ 9router/ 2>/dev/null || true
-            git commit -m "Sync hermes state & 9router data from celin instance"
+            git commit -m "Sync hermes state & 9router data from sydney instance"
             # Pull first in case another run pushed before us
             git pull --rebase origin "${{ github.ref_name }}" || true
             git push origin "${{ github.ref_name }}" || echo '⚠️ Push failed — changes saved locally'
