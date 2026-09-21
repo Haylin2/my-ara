@@ -14,20 +14,36 @@
     "use_count": 5,
     "view_count": 5
   },
+  "git-workflow": {
+    "archived_at": null,
+    "created_at": "2026-09-21T18:58:10.077603+00:00",
+    "created_by": "agent",
+    "first_seen_at": null,
+    "last_patched_at": null,
+    "last_reused_patch_generation": 0,
+    "last_used_at": null,
+    "last_viewed_at": null,
+    "patch_count": 0,
+    "patch_generation": 0,
+    "pinned": false,
+    "state": "active",
+    "use_count": 0,
+    "view_count": 0
+  },
   "github": {
     "archived_at": null,
     "created_at": "2026-09-07T16:26:37.132874+00:00",
     "created_by": null,
     "last_patched_at": null,
     "last_reused_patch_generation": 0,
-    "last_used_at": "2026-09-11T19:17:10.021940+00:00",
-    "last_viewed_at": "2026-09-11T19:17:09.960728+00:00",
+    "last_used_at": "2026-09-21T18:56:21.588704+00:00",
+    "last_viewed_at": "2026-09-21T18:56:21.587471+00:00",
     "patch_count": 0,
     "patch_generation": 0,
     "pinned": false,
     "state": "active",
-    "use_count": 12,
-    "view_count": 12
+    "use_count": 14,
+    "view_count": 14
   },
   "hermes-agent": {
     "archived_at": null,
