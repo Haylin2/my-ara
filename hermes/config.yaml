@@ -89,6 +89,10 @@ delegation:
   max_iterations: 250
 skills:
   creation_nudge_interval: 15
+plugins:
+  enabled:
+    - superpowers
+  disabled: []
 kanban:
   review_dispatch: true
 code_execution:
