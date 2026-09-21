@@ -2,9 +2,9 @@
   "_README": "LEGACY MIRROR of the gateway routing index (the primary copy lives in the gateway_routing table in ~/.hermes/state.db). Maps messaging session keys (agent:main:<platform>:...) to active session IDs. This is NOT the session list. ALL sessions (CLI, TUI, and gateway) live in ~/.hermes/state.db and are shown by `hermes sessions list` and `/sessions`. Disable this file with `gateway.write_sessions_json: false` in config.yaml.",
   "agent:main:telegram:dm:100651143": {
     "session_key": "agent:main:telegram:dm:100651143",
-    "session_id": "20260911_170621_6b20fbc9",
-    "created_at": "2026-09-11T17:06:21.732058",
-    "updated_at": "2026-09-11T17:06:21.732058",
+    "session_id": "20260921_200618_beb3ef8a",
+    "created_at": "2026-09-21T20:06:18.449951",
+    "updated_at": "2026-09-21T20:06:18.449951",
     "display_name": "M A",
     "platform": "telegram",
     "chat_type": "dm",
