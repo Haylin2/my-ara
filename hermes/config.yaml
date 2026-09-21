@@ -142,6 +142,16 @@ mcp_servers:
     command: sh
     env:
       APP_ENV: local
+  github:
+    command: npx
+    args:
+      - -y
+      - '@modelcontextprotocol/server-github'
+      - --env
+      - GITHUB_PERSONAL_ACCESS_TOKEN=${MY_PAT}
+      - --connect-timeout
+      - '60'
+    enabled: true
 platform_toolsets:
   cli:
     - hermes-cli
