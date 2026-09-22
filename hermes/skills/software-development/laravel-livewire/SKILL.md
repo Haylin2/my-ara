@@ -34,6 +34,11 @@ PHP code changes, test writing, and API resource transformers.
    call `toArray(new Request())` to assert exact field contracts.
 5. **E2E tests go in `tests/e2e/<feature>/`** with `.spec.ts` extension.
    Import from `../shared/fixtures` for `login`, `waitForLivewire`, etc.
+6. **Regenerate PHPStan baseline after fixing errors.** When you fix errors
+   that exist in `phpstan-baseline.neon`, the old entries become unmatched
+   and PHPStan reports new errors. Run `vendor/bin/phpstan analyse
+   --generate-baseline` after every fix round, then verify with
+   `composer phpstan`.
 
 ## Pitfalls
 
@@ -54,6 +59,56 @@ PHP code changes, test writing, and API resource transformers.
   generation in `boot()` (via `Str::uuid()`) work with `HasFactory`.
   Don't add `HasUuids` trait — it would conflict with the manual boot
   logic.
+- **PHPStan `auth()->id()` vs `Auth::id()` in Livewire blade components.**
+  PHPStan types `auth()` as `Illuminate\Contracts\Auth\Factory` which
+  lacks `id()`. In anonymous-class Livewire blade components (single-file
+  components with `return new class extends Component`), add
+  `use Illuminate\Support\Facades\Auth;` and call `Auth::id()` instead.
+  `auth()->user()` works fine (returns User|null), but `auth()->id()`
+  does not.
+- **PHPStan generic type for HasFactory.** PHPStan level 6+ requires the
+  generic type annotation on `use HasFactory`. Write
+  `/** @use HasFactory<\Database\Factories\YourFactory> */` immediately
+  above the `use HasFactory;` statement. Without it, PHPStan reports
+  `missingType.generics`.
+- **PHPStan `@property-read` on JsonResource.** When a Resource class
+  accesses `$this->some_field` (magic proxied from the underlying model),
+  PHPStan reports `property.notFound`. Fix: add `@property-read` PHPDoc
+  annotations for every accessed field, then access via
+  `$model = $this->resource;` with a `@var Model $model` cast. Match
+  the pattern used by other Resources in the project (see
+  `NotificationResource.php` for the reference implementation).
+- **`updateOrCreate` overwrites ownership on edit.** When using
+  `Model::updateOrCreate(['id' => $editingId], [...])` and one field
+  (e.g. `user_id`, `created_by`) should only be set on create — not on
+  update — do NOT include it in the attributes array. The update path
+  would overwrite the original value. Instead, omit the field from
+  `updateOrCreate`, then conditionally set it after:
+  ```php
+  $model = Model::updateOrCreate(['id' => $editingId], [...]);
+  if (! $editingId) {
+      $model->update(['user_id' => Auth::id()]);
+  }
+  ```
+
+## Merge Conflicts in Auto-Generated Files
+
+When a PR has merge conflicts with `upstream/beta` in auto-generated files
+(like `phpstan-baseline.neon`), do NOT manually merge the conflict markers.
+These files are machine-generated — manual merge produces invalid output.
+
+**Procedure:**
+1. `git fetch upstream beta && git merge upstream/beta`
+2. For the conflicted auto-generated file: `git checkout --theirs <file>`
+   (take upstream's version as starting point)
+3. `git add <file>`
+4. Regenerate from scratch: `vendor/bin/phpstan analyse --no-progress --generate-baseline`
+5. Verify: `composer phpstan`
+6. `git add <file> && git commit --no-edit`
+7. `git push origin <branch>`
+
+**Never** edit phpstan-baseline.neon by hand to resolve conflicts.
+The regenerate step produces the correct baseline for the current code state.
 
 ## Testing Patterns
 

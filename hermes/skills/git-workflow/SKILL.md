@@ -46,6 +46,24 @@ git add target/inside/repo/
 git commit -m "Add dir contents (fix nested repo)"
 ```
 
+### Unintended file changes in feature commits
+
+When committing feature work, run `git diff --stat` before staging to catch
+unintended modifications to config/meta files (e.g. `AGENTS.md`, `.hermes.md`)
+that were modified by tooling or agents during the session but are not part of
+the feature.
+
+**Prevention:** `git add -p` or selective `git add <paths>` instead of
+`git add -A`. Review `git diff --staged --stat` before committing.
+
+**Fix — restore from upstream before amend:**
+
+```bash
+git show upstream/beta:AGENTS.md > AGENTS.md
+git add AGENTS.md
+git commit --amend --no-edit
+```
+
 ### Missing git identity on fresh clones
 
 New clones may lack both global and per-repo `user.name`/`user.email`.

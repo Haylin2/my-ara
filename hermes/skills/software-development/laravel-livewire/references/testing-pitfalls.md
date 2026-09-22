@@ -9,6 +9,15 @@
 | Assert factory nullable field | `'icon' => null` on NOT NULL column | Use column default: `'icon' => 'o-bell'` |
 | Generate optional JSON data | `fake()->passthrough()` | `fake()->words(3)` — passthrough requires a value argument |
 
+## PHPStan Patterns for Laravel/Livewire
+
+| Scenario | Wrong | Correct |
+|---|---|---|
+| Access auth ID in blade component | `auth()->id()` | `Auth::id()` with `use Illuminate\Support\Facades\Auth;` |
+| HasFactory on model | `use HasFactory;` alone | `/** @use HasFactory<\Database\Factories\XFactory> */` above `use HasFactory;` |
+| JsonResource magic property | `$this->field` in `toArray()` | `@property-read` annotations + `$model = $this->resource;` with `@var Model $model` |
+| After fixing PHPStan errors | Run `composer phpstan` once | Regenerate baseline: `vendor/bin/phpstan analyse --generate-baseline`, then verify |
+
 ## Factory Creation Checklist
 
 1. Check the migration for NOT NULL columns — factory must not pass null.
