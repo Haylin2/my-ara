@@ -78,6 +78,24 @@ PHP code changes, test writing, and API resource transformers.
   `$model = $this->resource;` with a `@var Model $model` cast. Match
   the pattern used by other Resources in the project (see
   `NotificationResource.php` for the reference implementation).
+- **PHPStan without larastan degrades an Eloquent chain to `Query\Builder`
+  after `whereIn()`.** `Eloquent\Builder` declares `@mixin Query\Builder`, so
+  the first call PHPStan resolves through the mixin types the receiver as
+  `Query\Builder` and any later Eloquent-only call fails with
+  `Call to an undefined method Illuminate\Database\Query\Builder::with()/withCount()`.
+  **Fix (verified — clears the error with zero baseline entries): end every
+  chain on a call that `Eloquent\Builder` defines itself.** Put eager loads
+  first, then move the scope filters into a trailing closure —
+  `->where(function ($q) use ($ids) { $q->whereIn(...); })` — or filter by key
+  with `whereKey($ids)` instead of `whereIn('id', $ids)`. `where()` and
+  `whereKey()` are declared on the Eloquent builder with `@return $this`, so the
+  body returns an Eloquent builder and `return.type` disappears; callers already
+  honour the declared `@return Builder<Model>`. Do NOT reach for an inline
+  `@var`/`assert()` to override the inferred type — PHPStan rejects that
+  explicitly. Only a chain that must end on a mixin-only call
+  (`orderBy()`/`limit()` before `get()`) still reports; that residual goes into
+  the regenerated baseline (Always-On rule 6). The root fix is larastan, which
+  this project does not run.
 - **`updateOrCreate` overwrites ownership on edit.** When using
   `Model::updateOrCreate(['id' => $editingId], [...])` and one field
   (e.g. `user_id`, `created_by`) should only be set on create — not on
@@ -90,6 +108,38 @@ PHP code changes, test writing, and API resource transformers.
       $model->update(['user_id' => Auth::id()]);
   }
   ```
+
+## Extracting a Reusable Nested Component
+
+When one single-file Livewire component holds two responsibilities, split it
+into a child component and a thin parent page:
+
+1. Move the mechanics **verbatim** into `resources/views/livewire/<ns>/<name>.blade.php`.
+   The child owns state and methods; the parent keeps access checks, detail
+   panels and page chrome (header, theme selector).
+2. Child → parent: `$this->dispatch('event', id: $id)` in the child,
+   `#[On('event')] public function handler(int $id)` on the parent. Dispatched
+   **named** arguments must match the listener's parameter names.
+3. Per-node render hooks: pass a Blade view name plus a data array down as
+   props and `@include($view, ['unit' => $unit, 'data' => $data])` in the node
+   partial. Never let the child query page-specific data per node — that is the
+   N+1 trap the extraction exists to remove.
+4. Retarget mechanics tests to the child; keep auth/panel/render tests on the
+   parent.
+
+Test contract after the split:
+- Parent `assertSee()` **does** include child-rendered HTML (children render
+  inline), so page-level render assertions keep working.
+- Parent `->get('prop')` / `->call('method')` do **not** reach the child — assert
+  child state with `Livewire::test('child', $props)` and drive the parent through
+  the event: `Livewire::test('parent')->dispatch('event', id: ...)`.
+- Cover both halves of the wiring: `->assertDispatched(...)` on the child proves
+  it fires, `->dispatch(...)` on the parent proves the listener runs. Asserting
+  only the parent's handler by direct `->call()` passes even when the event is
+  never dispatched.
+- Batch level-wise loads (`whereIn('parent_id', $ids)`) rather than one query
+  per node, and pin the result with a measured query-count assertion so the N+1
+  cannot come back.
 
 ## Merge Conflicts in Auto-Generated Files
 
@@ -113,4 +163,5 @@ The regenerate step produces the correct baseline for the current code state.
 ## Testing Patterns
 
 See `references/testing-pitfalls.md` for the full decision table on
-assertion patterns, factory creation, and E2E test structure.
+assertion patterns, factory creation, scope/fixture traps, and E2E test
+structure.

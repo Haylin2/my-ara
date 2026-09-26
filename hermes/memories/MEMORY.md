@@ -1,1 +1,3 @@
 h-dashboard tools: CodeGraph v1.6.0 initialized at /home/runner/h-dashboard (527 files, 7925 nodes). Laravel Boost MCP works (application_info, search_docs, database_schema). Context7 MCP works (Livewire lib ID: /websites/livewire_laravel_4_x). GitHub MCP available (26 tools). read-the-damn-docs skill installed. shadcn/improve skill loaded. All tools operational.
+§
+h-dashboard tooling: GitHub MCP `create_pull_request` fails with "Requires authentication" on this box; gh CLI is authenticated (Haylin2, repo scope) — open PRs with `gh pr create --repo asgarimehdi/h-dashboard --base beta --head Haylin2:aram --title ... --body-file <scratch.md>`. Laravel Boost, CodeGraph, Context7 MCP all work; GitHub MCP's other read calls were fine earlier.
