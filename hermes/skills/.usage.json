@@ -52,15 +52,15 @@
     "created_by": "agent",
     "first_seen_at": null,
     "last_patched_at": "2026-09-30T15:43:16.427888+00:00",
-    "last_reused_patch_generation": 1,
-    "last_used_at": "2026-09-30T15:40:58.105693+00:00",
-    "last_viewed_at": "2026-09-30T15:40:58.103775+00:00",
+    "last_reused_patch_generation": 2,
+    "last_used_at": "2026-10-01T00:18:04.301171+00:00",
+    "last_viewed_at": "2026-10-01T00:18:04.299976+00:00",
     "patch_count": 2,
     "patch_generation": 2,
     "pinned": false,
     "state": "active",
-    "use_count": 9,
-    "view_count": 9
+    "use_count": 10,
+    "view_count": 10
   },
   "github": {
     "archived_at": null,
