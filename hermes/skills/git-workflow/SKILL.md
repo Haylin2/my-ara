@@ -20,6 +20,29 @@ Pitfalls and procedures for everyday git operations that fall outside standard
 - Always check `git status` and `git remote -v` before staging or pushing.
 - Configure per-repo identity before first commit if global config is absent.
 - Never assume a branch name — read it from `git branch --show-current`.
+- Before a bare `git push`, read the upstream (`git branch -vv` or
+  `git config branch.<name>.merge`). If it is not your own topic branch, push
+  an explicit refspec instead: `git push <remote> HEAD:<branch>`.
+
+## Pitfalls
+
+### Upstream can point at the integration branch
+
+A working branch is routinely created tracking the shared integration branch
+(`origin/beta`), so `git status` shows `## topic...origin/beta` and a bare
+`git push` — including the implicit push behind `git push` with no args —
+sends your commits straight to that shared branch instead of your own remote
+branch.
+
+**Fix — always push an explicit refspec when the upstream is not yours:**
+
+```bash
+git config --get-regexp '^branch\.<name>\.'   # remote + merge
+git push <remote> HEAD:<your-remote-branch>    # never bare `git push`
+```
+
+The mirror hazard applies to `git pull` too: pulling follows the same
+upstream and merges the integration branch into your branch.
 
 ## Pitfalls
 

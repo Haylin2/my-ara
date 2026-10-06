@@ -4,3 +4,5 @@ h-dashboard project: Laravel 13.x health dashboard for hospital hardware invento
 §
 User profile
 § Wants progress visibility on long multi-step work: an initial full status report, then a terse status every 5 minutes until the task finishes (Persian, labelled sections, no filler). Reports should stop as soon as the work is complete.
+§
+When a terminal command is blocked by the security scan awaiting consent, surface it and ask the user to re-approve — do not silently substitute a different route to the same outcome.

@@ -39,9 +39,27 @@ PHP code changes, test writing, and API resource transformers.
    and PHPStan reports new errors. Run `vendor/bin/phpstan analyse
    --generate-baseline` after every fix round, then verify with
    `composer phpstan`.
+7. **A failing check on files outside your diff is a stale generated file,
+   not your bug — but prove it.** Baseline/manifest `ignore.count` entries go
+   stale when code changes without a regen, so the job reds for everyone
+   based on that integration branch. Reproduce on a clean base first
+   (`git stash push` → same check → `git stash pop`), then regenerate rather
+   than hand-patching single entries. Sanity-check the regenerated diff:
+   counts may only go *down* and entries may only disappear — an added entry
+   means a genuinely new error got suppressed.
 
 ## Pitfalls
 
+- **Denied writes must throw, not return silently.** In a component method,
+  route authorization through the policy (`$this->authorize('update', $model)`)
+  instead of hand-rolling `if ($model->user_id !== auth()->id()) return;`.
+  A silent no-op denies nothing testable and drifts from the policy the moment
+  the policy tightens. Livewire's test broker runs the component with
+  `withoutExceptionHandling([HttpException, AuthorizationException,
+  ModelNotFoundException])`, so a denial asserts cleanly:
+  `Livewire::test('x.y')->call('method', $id)->assertForbidden()`.
+  Also assert the row did not change (`assertDatabaseHas`), or the test only
+  proves the status code.
 - **`whenLoaded` returns `MissingValue`, not `null`.** When calling
   `toArray()` directly on a JsonResource (not through `toResponse()`),
   `whenLoaded('relation')` returns a `MissingValue` object. Tests must
