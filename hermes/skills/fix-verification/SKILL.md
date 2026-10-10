@@ -86,6 +86,12 @@ close.
 - Merged ≠ acceptance-complete: implementations can deliberately deviate from
   the issue's written spec. Diff shipped code against each acceptance line and
   report deviations as gaps instead of counting the PR as done.
+- An open issue still wearing its "ready" label may be fully delivered:
+  GitHub auto-closes an issue only when its PR merges into the **default**
+  branch (`gh repo view --json defaultBranchRef`), so fixes that merged into a
+  release branch leave the issue open forever. Check the PR's base against the
+  default branch and grade acceptance on the integration tree before bucketing
+  anything as "not fixed".
 - An acceptance item about a repo setting (branch protection, required checks,
   templates) is invisible to git — skip the API check and you will wrongly
   report it done.

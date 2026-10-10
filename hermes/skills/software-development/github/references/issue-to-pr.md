@@ -20,6 +20,21 @@ Use `terminal` to run `gh issue view <N> --comments`. The body is a snapshot fro
 
 Before writing anything, run `gh pr list --search "#<N>" --state all` plus at least two keyword/synonym variants of the symptom (`gh pr list --search "<subsystem> <symptom>" --state open`). Popular issues attract multiple independent fixes; building a duplicate wastes the work and the credit. Also check whether a recent commit already fixed it: `git log --oneline -20 -- <relevant files>`. Done when you know every open PR and recent commit touching this issue, or that none exist.
 
+When handed a **list** of issues (a label sweep, a backlog), run the sweep for
+ALL of them before planning any work — one `for n in <nums>; do gh pr list
+--state all --search "$n"; done` — then confirm each hit actually landed on the
+integration branch: `git log <integration> --grep='#<N>'` plus
+`git merge-base --is-ancestor <merge-sha> <integration>`. GitHub closes an
+issue only when its PR merges into the repo's **default** branch
+(`gh repo view --json defaultBranchRef`) — if work merges into a release branch
+while the default is elsewhere, fully-fixed issues stay open and keep their
+label forever, so "open + labeled" is not evidence of undone work. If a hit is
+merged on the integration branch and every acceptance line grades green there,
+the deliverable is a verification report with evidence (file paths, the
+issue's own regression tests run on that tree, merge ancestry) — never a
+duplicate PR, even though the request was phrased as "fix and open PRs";
+surface the finding and let the user decide about closing.
+
 ### 3. Validate the premise against current code — and against design intent
 
 Reproduce the bug or demonstrate the missing behavior on the current default branch with a failing test or fixture, using `search_files` and `read_file` to trace the reported path. Then check the second question: is the "bug" actually deliberate design? Run `git log -p -S "<symbol>"` on the code the issue wants changed and read the original commit's intent — a missing link or restriction is often the feature. Challenge stale or flawed issue prose instead of implementing it blindly. Done when the root cause or feature gap is demonstrated in current code AND the change doesn't fight an intentional design.
@@ -56,7 +71,7 @@ Inspect live checks and failure logs via `gh pr checks` / `gh run view --log-fai
 ## Verification
 
 - [ ] Full issue thread read; newest comment state reflected in the plan.
-- [ ] Duplicate-PR sweep run with issue number + 2 keyword variants.
+- [ ] Duplicate-PR sweep run with issue number + 2 keyword variants; for a batch of issues, swept ALL of them before writing code and confirmed merge ancestry on the integration branch.
 - [ ] Premise reproduced on current code; design intent checked via git history.
 - [ ] Regression test proven to fail without the fix.
 - [ ] Sibling call sites fixed or explicitly ruled out.
