@@ -1,0 +1,34 @@
+{
+  "github": {
+    "archived_at": null,
+    "created_at": "2026-10-22T19:49:34.911011+00:00",
+    "created_by": null,
+    "first_seen_at": null,
+    "last_patched_at": null,
+    "last_reused_patch_generation": 0,
+    "last_used_at": "2026-10-22T19:49:34.913217+00:00",
+    "last_viewed_at": "2026-10-22T19:49:34.911023+00:00",
+    "patch_count": 0,
+    "patch_generation": 0,
+    "pinned": false,
+    "state": "active",
+    "use_count": 1,
+    "view_count": 1
+  },
+  "superpowers:systematic-debugging": {
+    "archived_at": null,
+    "created_at": "2026-10-22T19:49:34.887391+00:00",
+    "created_by": null,
+    "first_seen_at": null,
+    "last_patched_at": null,
+    "last_reused_patch_generation": 0,
+    "last_used_at": "2026-10-22T19:49:34.888480+00:00",
+    "last_viewed_at": "2026-10-22T19:49:34.887406+00:00",
+    "patch_count": 0,
+    "patch_generation": 0,
+    "pinned": false,
+    "state": "active",
+    "use_count": 1,
+    "view_count": 1
+  }
+}
